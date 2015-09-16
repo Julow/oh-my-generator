@@ -7,7 +7,7 @@
 #    By: juloo <juloo@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/09/15 22:41:07 by juloo             #+#    #+#              #
-#    Updated: 2015/09/16 20:28:50 by juloo            ###   ########.fr        #
+#    Updated: 2015/09/16 20:53:26 by juloo            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -104,15 +104,19 @@ def _trim_comment(comment, (markup_index, markup_line), markup_length):
 		comment[markup_line] = comment[markup_line][1:]
 	for i in range(markup_line + 1, len(comment)):
 		comment[i] = comment[i][markup_index:]
-	return comment
+		if comment[i].startswith(MARKUP_END):
+			return (comment[:i], True)
+	return (comment, False)
 
 #
 def _exec_comment_util(f, (l, comment), (markup_index, markup_line), generator):
 	while True:
 		for c in comment:
 			utils.out_text(c)
-		comment = _trim_comment(comment, (markup_index, markup_line), len(generator['markup']))
+		comment, end = _trim_comment(comment, (markup_index, markup_line), len(generator['markup']))
 		generator['generator'](comment[markup_line:])
+		if end:
+			return l
 		try:
 			while True:
 				start_index = l.find(COMMENT_START)
