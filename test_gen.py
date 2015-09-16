@@ -7,7 +7,7 @@
 #    By: juloo <juloo@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/09/15 22:41:07 by juloo             #+#    #+#              #
-#    Updated: 2015/09/16 16:48:58 by jaguillo         ###   ########.fr        #
+#    Updated: 2015/09/16 20:28:50 by juloo            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,23 +41,21 @@ _output = None
 
 # Close current output
 def _close_output():
-	# global _output
-	# if _output != None:
-	# 	_output.close()
-	# 	_output = None
-	pass
+	global _output
+	if _output != None:
+		_output.close()
+		_output = None
 
 # Change current output
 def _set_output(file_name):
 	global _output
-	# try:
-	# 	f = open(file_name, "w")
-	# except:
-	# 	err("Error: Cannot open %s\\n" % (file_name))
-	# 	exit(1)
-	# _close_output()
-	# _output = f
-	_output = stdout
+	try:
+		f = open(file_name, "w")
+	except:
+		err("Error: Cannot open %s\\n" % (file_name))
+		exit(1)
+	_close_output()
+	_output = f
 
 #
 #
@@ -128,7 +126,7 @@ def _exec_comment_util(f, (l, comment), (markup_index, markup_line), generator):
 					break
 				l = f.next()
 		except:
-			pass
+			utils.error("unclosed %s" % generator["markup"])
 		markup_line = 0
 	return l
 

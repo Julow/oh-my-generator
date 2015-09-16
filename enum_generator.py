@@ -6,7 +6,7 @@
 #    By: jaguillo <jaguillo@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/09/16 16:32:50 by jaguillo          #+#    #+#              #
-#    Updated: 2015/09/16 17:45:02 by jaguillo         ###   ########.fr        #
+#    Updated: 2015/09/16 20:02:37 by juloo            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -56,7 +56,7 @@ def _parse_enum(code):
 	in_structs = True
 	for i in range(1, len(code)):
 		if in_structs:
-			if code[i].endswith(';'):
+			if code[i].endswith(";\n"):
 				fields.append(code[i])
 			else:
 				in_structs = False
