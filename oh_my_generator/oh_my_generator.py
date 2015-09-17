@@ -2,17 +2,17 @@
 # **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
-#    oh-my-generator.py                                 :+:      :+:    :+:    #
+#    oh_my_generator.py                                 :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
 #    By: juloo <juloo@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/09/15 22:41:07 by juloo             #+#    #+#              #
-#    Updated: 2015/09/17 08:11:50 by jaguillo         ###   ########.fr        #
+#    Updated: 2015/09/17 09:08:00 by jaguillo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 from sys import argv, stdout
-import omg_enum, utils
+import .omg_enum, .utils
 
 #
 
@@ -185,14 +185,14 @@ def start_gen(file_name):
 #
 # main
 #
+def main():
+	utils.out_code(INITIAL_CODE)
 
-utils.out_code(INITIAL_CODE)
+	if len(argv) <= 1:
+		utils.error("Not enougth argument")
 
-if len(argv) <= 1:
-	utils.error("Not enougth argument")
+	for i in range(1, len(argv)):
+		start_gen(argv[i])
 
-for i in range(1, len(argv)):
-	start_gen(argv[i])
-
-utils.out_code(END_CODE)
-stdout.flush()
+	utils.out_code(END_CODE)
+	stdout.flush()

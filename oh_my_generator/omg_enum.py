@@ -6,12 +6,11 @@
 #    By: jaguillo <jaguillo@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/09/16 16:32:50 by jaguillo          #+#    #+#              #
-#    Updated: 2015/09/17 08:12:27 by jaguillo         ###   ########.fr        #
+#    Updated: 2015/09/17 09:08:10 by jaguillo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-import utils
-import re
+import .utils, re
 
 ENUM_CODE = """
 struct			s_evalue_%(name)s
