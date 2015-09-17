@@ -6,10 +6,11 @@
 #    By: jaguillo <jaguillo@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/09/16 16:32:50 by jaguillo          #+#    #+#              #
-#    Updated: 2015/09/17 09:20:43 by jaguillo         ###   ########.fr        #
+#    Updated: 2015/09/17 12:11:24 by jaguillo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
+from collections import OrderedDict
 import utils, re
 
 ENUM_CODE = """
@@ -41,29 +42,38 @@ struct s_enum_%(name)s const	g_%(name)s = {
 ENUM_VALUE = "	%(value)s"
 ENUM_FIELD = "	t_%(enum)s			%(name)s;\n"
 
+ENUM_OPT_MACRO_LEN = ("length-macro", "# define %(macro)s		%(length)s\n\n")
+
 ENUM_DEF_PARAMS = "	&(struct s_evalue_%(enum)s){%(params)s},\n"
 
-ENUM_PARAM_REG = re.compile('^([a-zA-Z0-9]+)\((.*)\),?$')
+ENUM_PARAM_REG = re.compile('^([a-zA-Z0-9_]+)\((.*)\),?$')
+ENUM_OPTION_REG = re.compile('([a-zA-Z0-9_-]+)(?:\((.*)\))?')
 
-# {"<enum name>": {"fields": [], "values": {"<name>": ["<params>"]}}}
+# {"<enum name>": {"fields": [], "values": {"<name>": ["<params>"]}, "options": {"opt": "args"}}
 enums = {}
 
+# Process options
+def _process_options(enum):
+	pass
+
 # Parse an enum
-def _parse_enum(code):
+def _parse_enum(code, options):
 	fields = []
-	values = {}
+	values = OrderedDict()
 	in_structs = True
-	for i in range(1, len(code)):
+	for l in code:
 		if in_structs:
-			if code[i].endswith(";\n"):
-				fields.append(code[i])
+			if l.endswith(";\n"):
+				fields.append(l)
 			else:
 				in_structs = False
 		if not in_structs:
-			m = ENUM_PARAM_REG.match(code[i])
+			m = ENUM_PARAM_REG.match(l)
 			if m != None:
 				values[m.group(1)] = m.group(2)
-	return {"fields": fields, "values": values}
+	enum = {"fields": fields, "values": values, "options": options}
+	_process_options(enum)
+	return enum
 
 # Print an enum declaration
 def _print_enum(name, enum):
@@ -81,6 +91,11 @@ def _print_enum(name, enum):
 		"fields": fields,
 		"values": values
 	})
+	if ENUM_OPT_MACRO_LEN[0] in enum["options"]:
+		utils.out_text(ENUM_OPT_MACRO_LEN[1] % {
+			"macro": enum["options"][ENUM_OPT_MACRO_LEN[0]],
+			"length": len(enum["values"])
+		})
 
 # Print an enum def
 def _print_def_enum(name, enum):
@@ -101,10 +116,17 @@ def _print_def_enum(name, enum):
 #
 def enum(code):
 	global enums
-	if len(code) == 0 or len(code[0]) <= 1:
-		utils.error("[enum] need an argument (enum name)")
-	name = code[0][:-1]
-	enums[name] = _parse_enum(code)
+	opt = {}
+	name = None
+	for m in ENUM_OPTION_REG.finditer(code[0][:-1]):
+		if name == None:
+			name = m.group(1)
+			opt["name"] = name
+		else:
+			opt[m.group(1)] = m.group(2)
+	if name == None:
+		utils.error("?enum require an enum name")
+	enums[name] = _parse_enum(code[1:], opt)
 	_print_enum(name, enums[name])
 
 #
@@ -112,8 +134,8 @@ def enum(code):
 #
 def enum_def(code):
 	if len(code) == 0 or len(code[0]) <= 1:
-		utils.error("[enum-def] need an argument (enum name)")
+		utils.error("?enum-def need an argument (enum name)")
 	name = code[0][:-1]
 	if not name in enums:
-		utils.error("[enum-def] unknown enum: %s" % name)
+		utils.error("?enum-def unknown enum: %s" % name)
 	_print_def_enum(name, enums[name])
