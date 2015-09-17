@@ -7,7 +7,7 @@
 #    By: juloo <juloo@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/09/15 22:41:07 by juloo             #+#    #+#              #
-#    Updated: 2015/09/17 09:20:37 by jaguillo         ###   ########.fr        #
+#    Updated: 2015/09/17 10:04:26 by jaguillo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,6 +21,7 @@ INITIAL_CODE = """#
 #
 
 from sys import stdout, stderr
+import tempfile, os, shutil
 
 #
 #
@@ -28,7 +29,10 @@ from sys import stdout, stderr
 
 # Write to the current output
 def out(s):
-	_output.write(s)
+	global omg_output
+	if omg_output != None:
+		f, _, _ = omg_output
+		f.write(s)
 
 # Write to stderr
 def err(s):
@@ -37,25 +41,27 @@ def err(s):
 #
 # Internal functions
 #
-_output = None
+# (tmp_fd, tmp_file, dst_file)
+omg_output = None
 
-# Close current output
-def _close_output():
-	global _output
-	if _output != None:
-		_output.close()
-		_output = None
+# Save and close current output
+def omg_close_output():
+	global omg_output
+	if omg_output != None:
+		f, tmp_file, dst_file = omg_output
+		f.flush()
+		os.fsync(f.fileno())
+		f.close()
+		os.unlink(dst_file)
+		shutil.move(tmp_file, dst_file)
+		omg_output = None
 
 # Change current output
-def _set_output(file_name):
-	global _output
-	try:
-		f = open(file_name, "w")
-	except:
-		err("Error: Cannot open %s\\n" % (file_name))
-		exit(1)
-	_close_output()
-	_output = f
+def omg_set_output(file_name):
+	global omg_output
+	omg_close_output()
+	f, tmp_file = tempfile.mkstemp("", "omg_")
+	omg_output = (os.fdopen(f, "w"), tmp_file, file_name)
 
 #
 #
@@ -64,7 +70,7 @@ def _set_output(file_name):
 """
 
 END_CODE = """
-_close_output()
+omg_close_output()
 """
 
 COMMENT_START = "/*"
@@ -74,7 +80,7 @@ MARKUP_END = "?end"
 
 #
 
-SET_OUT_CODE = "_set_output(\"%s\")\n"
+SET_OUT_CODE = "omg_set_output(\"%s\")\n"
 
 #
 
@@ -89,8 +95,8 @@ def _code_generator(code):
 #
 GENERATORS = [
 	{"markup": "?omg",		"generator": _code_generator},
-	{"markup": "?enum",		"generator": omg_enum.enum},
-	{"markup": "?enum-def",	"generator": omg_enum.enum_def}
+	{"markup": "?enum-def",	"generator": omg_enum.enum_def},
+	{"markup": "?enum",		"generator": omg_enum.enum}
 ]
 
 #
