@@ -2,17 +2,17 @@
 # **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
-#    test_gen.py                                        :+:      :+:    :+:    #
+#    oh-my-generator.py                                 :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
 #    By: juloo <juloo@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/09/15 22:41:07 by juloo             #+#    #+#              #
-#    Updated: 2015/09/16 20:53:26 by juloo            ###   ########.fr        #
+#    Updated: 2015/09/17 08:11:50 by jaguillo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 from sys import argv, stdout
-import enum_generator, utils
+import omg_enum, utils
 
 #
 
@@ -70,7 +70,7 @@ _close_output()
 COMMENT_START = "/*"
 COMMENT_END = "*/"
 
-MARKUP_END = "[end]"
+MARKUP_END = "?end"
 
 #
 
@@ -88,9 +88,9 @@ def _code_generator(code):
 
 #
 GENERATORS = [
-	{"markup": "[code]",		"generator": _code_generator},
-	{"markup": "[enum]",		"generator": enum_generator.enum},
-	{"markup": "[enum-def]",	"generator": enum_generator.enum_def}
+	{"markup": "?omg",		"generator": _code_generator},
+	{"markup": "?enum",		"generator": omg_enum.enum},
+	{"markup": "?enum-def",	"generator": omg_enum.enum_def}
 ]
 
 #
