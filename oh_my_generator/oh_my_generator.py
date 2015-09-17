@@ -7,12 +7,12 @@
 #    By: juloo <juloo@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/09/15 22:41:07 by juloo             #+#    #+#              #
-#    Updated: 2015/09/17 09:08:00 by jaguillo         ###   ########.fr        #
+#    Updated: 2015/09/17 09:20:37 by jaguillo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 from sys import argv, stdout
-import .omg_enum, .utils
+import omg_enum, utils
 
 #
 
