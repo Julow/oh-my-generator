@@ -6,7 +6,7 @@
 #    By: jaguillo <jaguillo@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/09/16 16:32:50 by jaguillo          #+#    #+#              #
-#    Updated: 2015/09/17 12:20:49 by jaguillo         ###   ########.fr        #
+#    Updated: 2015/09/21 09:02:19 by jaguillo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -60,6 +60,7 @@ def _parse_enum(code, options):
 	fields = []
 	values = OrderedDict()
 	in_structs = True
+	param_id = 0
 	for l in code:
 		if in_structs:
 			if l.endswith(";\n"):
@@ -69,7 +70,11 @@ def _parse_enum(code, options):
 		if not in_structs:
 			m = ENUM_PARAM_REG.match(l)
 			if m != None:
-				values[m.group(1)] = m.group(2)
+				param_name = m.group(1)
+				values[param_name] = m.group(2).replace(
+					"?id?", str(param_id)).replace(
+					"?name?", param_name)
+				param_id += 1
 	enum = {"fields": fields, "values": values, "options": options}
 	_process_options(enum)
 	return enum
