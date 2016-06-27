@@ -6,7 +6,7 @@
 #    By: juloo <juloo@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/09/15 22:41:07 by juloo             #+#    #+#              #
-#    Updated: 2015/09/17 11:30:42 by jaguillo         ###   ########.fr        #
+#    Updated: 2016/06/27 17:27:59 by jaguillo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,6 +36,25 @@ def out(s):
 # Write to stderr
 def err(s):
 	stderr.write(s)
+
+# Output a list
+def out_list(lst, sep=", ", endl=",\\n", indent="\t", max_width=80, tab_size=4):
+	i = 0
+	nl = True
+	for e in lst:
+		e = str(e)
+		i += len(sep) + len(e)
+		if not nl and i >= max_width:
+			nl = True
+			out(endl)
+		if nl:
+			out(indent)
+			out(e)
+			i = len(indent.expandtabs(tab_size)) + len(e)
+			nl = False
+		else:
+			out(sep)
+			out(e)
 
 #
 # Internal functions
